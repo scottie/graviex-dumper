@@ -6,6 +6,11 @@ You can run many accounts/bots on many different markets.
 Use a new account/API key for each instance of Bot.
 Sells just under current market order
 
+INSTALL:
+
+npm install graviex-dumper --global
+
+
   Usage: App [options]
 
   Options:
