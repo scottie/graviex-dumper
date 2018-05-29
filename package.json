@@ -1,12 +1,13 @@
 {
   "name": "graviex-dumper",
   "version": "1.0.0",
-  "description": "",
+  "description": "A little bot for selling your graviex altcoin bags...",
   "main": "App.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Scott Lindh, <scottlindh@gmail.com>",
+  "git": "https://github.com/scottie/graviex-dumper",
   "license": "ISC",
   "bin": {
      "graviex-dumper": "./App.js"
