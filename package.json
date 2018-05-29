@@ -1,0 +1,19 @@
+{
+  "name": "graviex-dumper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "App.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Scott Lindh, <scottlindh@gmail.com>",
+  "license": "ISC",
+  "bin": {
+     "graviex-dumper": "./App.js"
+   },
+  "dependencies": {
+    "chalk-animation": "^1.6.0",
+    "commander": "^2.15.1",
+    "graviex": "^1.0.0"
+  }
+}
