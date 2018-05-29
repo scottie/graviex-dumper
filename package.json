@@ -1,6 +1,6 @@
 {
   "name": "graviex-dumper",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A little bot for selling your graviex altcoin bags...",
   "main": "App.js",
   "scripts": {
