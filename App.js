@@ -191,7 +191,7 @@ function mainDumpLoop(theMarket, increase, volume){
                                         //Dumping
                                         console.log("Sell Price: " + sellPrice);
                                         //sell
-                                        graviex.createOrder("onzbtc", "sell", volume, sellPrice, function(res2){
+                                        graviex.createOrder(theMarket, "sell", volume, sellPrice, function(res2){
                                             if(!res.error){
                                                 console.log(res2.id + "|" + res2.state + "|" + res2.side);									
                                             }else{
