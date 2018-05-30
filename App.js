@@ -41,12 +41,15 @@ var program = require('commander');
 
 program
   .version('0.1.0')
-  .option('-m, --market <data>', 'market to run bot on')
+  .option('-m, --market <data>', 'market to run bot on, ie: giobtc')
+  .option('-s, --coin <data>', 'coin ticker, ie: gio')
   .option('-i, --increase <n>', 'sell increase distance', parseFloat)
-  .option('-v, --volume <n>', 'sell volume', parseInt)
+  .option('-v, --volume <data>', 'sell volume')
   .option('-t, --ticker <data>', 'market to get ticker for')
   .option('-a, --accesskey <data>', 'Access KEY for API')
   .option('-s, --secretkey <data>', 'Secret KEY for API')
+  .option('-s, --looptime <n>', 'time for break in seconds ie: 60', parseInt)
+  
   .parse(process.argv);
 
 
@@ -67,12 +70,36 @@ if(program.secretkey){
     if(program.accesskey){
         graviex.accessKey = program.accesskey;
         //START
+        if (program.looptime){
+        if (program.coin){
         if (program.market){
             if (program.increase){
                 if (program.volume){
-                    //DUMPER LOOP
-                    chalkAnimation.pulse("[http://Merkle.Group | Graivex Dumper | info@merkle.group]");
-                    DUMPIT(program.market, program.increase, program.volume);
+                    //sell all or sell volume?
+                    var vol;
+                    if(program.volume == "ALL"){
+                        console.log("[VOLUME = ALL | SELLING ENTIRE BALANCE FOR VOLUME]");
+                        //get balance of market and sell ALL
+                        coinBalance(program.coin, function(balance){
+                            if(!balance.error){
+                                console.log("[" + program.coin+ " Balance] " + balance.balance);
+                                vol = balance.balance;
+                                //DUMPER ALL
+                                chalkAnimation.pulse("[http://Merkle.Group | Graivex Dumper | info@merkle.group]");
+                                DUMPIT(program.market, program.increase, vol);
+                            }else{
+                                console.log("Error: are you sure that coin exists? ie: onz syntax: --coin");
+                                return;
+
+                            }
+                        })
+                    }else{
+                        vol = program.volume;
+                        //DUMPER NOT ALL
+                        chalkAnimation.pulse("[http://Merkle.Group | Graivex Dumper | info@merkle.group]");
+                        DUMPIT(program.market, program.increase, vol);
+                    }
+                    
         
                 }else{
                     console.log("Error: Please insure you use the correct syntax: --volume");
@@ -81,10 +108,15 @@ if(program.secretkey){
             }else{
                 console.log("Error: Please insure you use the correct syntax: --increase");
             }
-            
         }else{
             console.log("Error: Please insure you use the correct syntax: --market");
+        }   
+        }else{
+            console.log("Error: Please insure you use the correct syntax: --coin");
         }
+    }else{
+        console.log("Error: Please insure you use the correct syntax: --looptime");
+    }
     }else{
         console.log("Error: Please see example syntax/command you need to set your ACCESSKEY");
     }
@@ -96,11 +128,34 @@ if(program.secretkey){
 
 
 function DUMPIT(market, increase, volume){
+    volume = parseInt(volume)
     setInterval(function() {
         var ani = chalkAnimation.rainbow('Graviex Dumping '+ volume + " " + market + '...');
         mainDumpLoop(market, increase, volume);
         ani.start(); // Animation resumes
-    }, 30 * 1000); // 60 * 1000 milsec
+    }, program.looptime * 1000); // 60 * 1000 milsec
+}
+
+/*
+coinBalance(alt_coin, function(balance){
+	if(!balance.error){
+		console.log(balance.balance);
+	}
+});
+*/
+function coinBalance(altcoin, callback){
+	graviex.account(function(res){
+		if(!res.error){
+			//console.log(res.accounts);
+			res.accounts.forEach(element => {
+				if(element.currency == altcoin){
+					return callback(element);
+				}				
+			}); 
+		}else{
+			return callback({error:res});
+		}
+	});
 }
 
 function mainDumpLoop(theMarket, increase, volume){
@@ -112,7 +167,7 @@ function mainDumpLoop(theMarket, increase, volume){
 					console.log("Selling At: " + selling.toFixed(9));
 					//check if those orders our ours, 
 					var oursSell = false;
-					graviex.orders("onzbtc", function(res){
+					graviex.orders(theMarket, function(res){
 						if(!res.error){
 							//if not ours open orders + 1 and -1 each side of the market to try win spread
 							//console.log(res);
