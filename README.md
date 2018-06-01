@@ -16,7 +16,7 @@ npm install graviex-dumper --global
   Options:
 
     -V, --version           output the version number
-    -m, --market <data>     market to run bot on, ie: giobtc
+    -m, --market <data>     market to run bot on, ie: btc, ltc, eth
     -s, --coin <data>       coin ticker, ie: gio
     -i, --increase <n>      sell increase distance
     -v, --volume <data>     sell volume
@@ -29,9 +29,9 @@ npm install graviex-dumper --global
 
 EXAMPLE USAGE:
 graviex-dumper --ticker onzbtc
-graviex-dumper --market onzbtc --increase 0.000000001 --volume 100 --secretkey 3f5AZ44ViStBpGg6KdqvY8UiE0yvm2Yygdm2xQ66 --accesskey KQxX1dTBSjKbvc5xVoMMUl9THFaXKI2rQ4RwfPoE --coin onz --looptime 10
+graviex-dumper --market btc --increase 0.000000001 --volume 100 --secretkey 3f5AZ44ViStBpGg6KdqvY8UiE0yvm2Yygdm2xQ6 --accesskey KQxX1dTBSjKbvc5xVoMMUl9THFaXKI2rQ4RwfoE --coin gio --looptime 10
 
 or DUMP ALL coins
-graviex-dumper --market ethbtc --increase 0.000000001 --volume ALL --secretkey 3f5AZ44ViStBpGg6KdqvY8UiE0yvm2Yygdm2xQ66 --accesskey KQxX1dTBSjKbvc5xVoMMUl9THFaXKI2rQ4RwfPoE --coin eth --looptime 10
+graviex-dumper --market btc --increase 0.000000001 --volume ALL --secretkey 3f5AZ44ViStBpGg6KdqvY8UiE0yvm2Yygdm2xQ6 --accesskey KQxX1dTBSjKbvc5xVoMMUl9THFaXKI2rQ4RwfoE --coin gio --looptime 10
 
 

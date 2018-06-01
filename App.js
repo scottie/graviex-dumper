@@ -41,7 +41,7 @@ var program = require('commander');
 
 program
   .version('0.1.0')
-  .option('-m, --market <data>', 'market to run bot on, ie: giobtc')
+  .option('-m, --market <data>', 'market to run bot on, ie: btc, ltc, eth')
   .option('-s, --coin <data>', 'coin ticker, ie: gio')
   .option('-i, --increase <n>', 'sell increase distance', parseFloat)
   .option('-v, --volume <data>', 'sell volume')
@@ -80,24 +80,13 @@ if(program.secretkey){
                     if(program.volume == "ALL"){
                         console.log("[VOLUME = ALL | SELLING ENTIRE BALANCE FOR VOLUME]");
                         //get balance of market and sell ALL
-                        coinBalance(program.coin, function(balance){
-                            if(!balance.error){
-                                console.log("[" + program.coin+ " Balance] " + balance.balance);
-                                vol = balance.balance;
-                                //DUMPER ALL
-                                chalkAnimation.pulse("[http://Merkle.Group | Graivex Dumper | info@merkle.group]");
-                                DUMPIT(program.market, program.increase, vol);
-                            }else{
-                                console.log("Error: are you sure that coin exists? ie: onz syntax: --coin");
-                                return;
+                        DUMPIT(program.coin + program.market, program.increase, vol);
 
-                            }
-                        })
                     }else{
                         vol = program.volume;
                         //DUMPER NOT ALL
                         chalkAnimation.pulse("[http://Merkle.Group | Graivex Dumper | info@merkle.group]");
-                        DUMPIT(program.market, program.increase, vol);
+                        DUMPIT(program.coin + program.market, program.increase, vol);
                     }
                     
         
@@ -124,15 +113,28 @@ if(program.secretkey){
     console.log("Error: Please see example syntax/command you need to set your SECRETKEY, try --help");
 }
 
-  
 
-
-function DUMPIT(market, increase, volume){
-    volume = parseInt(volume)
+function DUMPIT(market, increase, volume){    
     setInterval(function() {
-        var ani = chalkAnimation.rainbow('Graviex Dumping '+ volume + " " + market + '...');
-        mainDumpLoop(market, increase, volume);
-        ani.start(); // Animation resumes
+        coinBalance(program.coin, function(balance){
+            if(!balance.error){
+                console.log("[" + program.coin+ " Balance] " + balance.balance);
+                vol = parseInt(balance.balance)
+                console.log("[SYMBOL]: " + market);
+                //DUMPER ALL
+                chalkAnimation.pulse("[http://Merkle.Group | Graivex Dumper | info@merkle.group]");
+                var ani = chalkAnimation.rainbow('Graviex Dumping '+ volume + " " + market + '...');
+                mainDumpLoop(market, increase, balance.balance);
+                ani.start(); // Animation resumes
+            }else{
+                console.log(balance.error);
+                console.log("Error: are you sure that coin exists? ie: syntax: --coin gio");
+                console.log("[COIN]: " + program.coin)
+                return;
+
+            }
+        })
+
     }, program.looptime * 1000); // 60 * 1000 milsec
 }
 
@@ -158,8 +160,41 @@ function coinBalance(altcoin, callback){
 	});
 }
 
+//clearOrdersForMarket("onzbtc", function(r){
+//    console.log(r)
+//});
+
+function clearOrdersForMarket(market, callback){
+    graviex.orders(market, function(res){
+        if(res.toString() == ""){
+            return callback({success:true, data:"nothing to remove"});
+        }else{
+            if(!res.error){
+                console.log("[Remove Order "+market+"]: " + res[0].id)
+                graviex.cancelOrder(res[0].id, function(res){
+                    if(!res.error){
+                        return callback({success:true, data:res});
+
+                    }else{
+                        return callback({success:false, error:res.error});
+                    }
+                });
+            }else{
+                //console.log(res)
+            }
+        }
+    });
+
+
+
+    //return callback("");
+}
+
 function mainDumpLoop(theMarket, increase, volume){
-    //Close all orders, so we can be top of the sell list	
+    //Close all orders, so we can be top of the sell list
+
+
+
 			graviex.orderBook(theMarket, function(res){
 				if(!res.error){		
 					var selling = parseFloat(res.asks[0].price);
@@ -182,15 +217,13 @@ function mainDumpLoop(theMarket, increase, volume){
 			
 							if(!oursSell){
                                 console.log("Orders live are not ours, making new orders...");
-                                graviex.clearAllOrders(function(res){
+                                clearOrdersForMarket("onzbtc", function(res){
                                     if(!res.error){
-                                        console.log("Removing old orders...");
-                                        res.forEach(function(order){
-                                            console.log(order.id + "|" + order.state + "|" + order.side);
-                                        });
+                                        console.log("[Removing Old Orders]: Success == " + res.success);
                                         //Dumping
                                         console.log("Sell Price: " + sellPrice);
                                         //sell
+                                        console.log("[ORDER LOG] " + theMarket + " SELL Volume: " + volume + " sellPrice: " + selling);
                                         graviex.createOrder(theMarket, "sell", volume, sellPrice, function(res2){
                                             if(!res.error){
                                                 console.log(res2.id + "|" + res2.state + "|" + res2.side);									
