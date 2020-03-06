@@ -217,7 +217,7 @@ function mainDumpLoop(theMarket, increase, volume){
 			
 							if(!oursSell){
                                 console.log("Orders live are not ours, making new orders...");
-                                clearOrdersForMarket("onzbtc", function(res){
+                                clearOrdersForMarket(theMarket, function(res){
                                     if(!res.error){
                                         console.log("[Removing Old Orders]: Success == " + res.success);
                                         //Dumping
